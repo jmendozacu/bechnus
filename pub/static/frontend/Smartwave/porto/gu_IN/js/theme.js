@@ -1,0 +1,1 @@
+/var/www/html/magentobe/app/design/frontend/Smartwave/porto/web/js/theme.js
