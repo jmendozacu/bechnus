@@ -1,0 +1,47 @@
+<controller_action_postdispatch_customer_account_createpost>
+			  <observers>
+				   <savecustomepostcity>
+                        <type>singleton</type>
+                        <class>customexclutionfavorite/observer</class>
+                        <method>saveCustomepostcity</method>
+                   </savecustomepostcity>
+			  </observers>
+		  </controller_action_postdispatch_customer_account_createpost>
+		  
+		  
+		   public function saveCustomepostcity($observer){
+	  	$fieldVal = Mage::app()->getFrontController()->getRequest()->getParams();
+		if(Mage::getSingleton('customer/session')->isLoggedIn()){ 
+			$postCode = "";
+			$suburb   = "";
+			if($fieldVal['postcode']!=""){
+      	 		$postCode = $fieldVal['postcode'];
+      		}
+			if($fieldVal['suburbs']!=""){
+      	 		$suburb   = $fieldVal['suburbs'];
+      		}
+			$customer = Mage::getSingleton('customer/session')->getCustomer();
+			$address = Mage::getModel("customer/address");
+			$address->setCustomerId($customer->getId())
+					->setPostcode($postCode)
+        			->setCity($suburb)
+					->setFirstname($customer->getFirstname())
+     			   	->setLastname($customer->getLastname())
+        			->setCountryId('AU')
+					->setTelephone($fieldVal['best_contact_no'])
+					->setStreet( 
+									array (
+										'0' => $fieldVal['street1'],
+										'1' => $fieldVal['street2'],
+									)
+								)
+					->setIsDefaultBilling('1')
+        		    ->setIsDefaultShipping('1');
+			try{
+				$address->save();
+			}
+			catch (Exception $e) {
+				Zend_Debug::dump($e->getMessage());
+			}
+		}
+	  }
